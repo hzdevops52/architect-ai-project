@@ -1,124 +1,102 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Cpu, Sparkles, ChevronRight, Clock } from "lucide-react";
+import { Clock, ChevronRight, RotateCcw, Cpu } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 interface WorkspaceSidebarProps {
-  onGenerate: (prompt: string) => void;
-  isLoading: boolean;
+  hasArchitecture: boolean;
+  history: string[];
+  onHistoryClick: (prompt: string) => void;
+  onReset: () => void;
+  currentPrompt?: string;
 }
 
-const examplePrompts = [
-  { name: "Uber", prompt: "Design the backend architecture of Uber" },
-  { name: "Netflix", prompt: "Design the streaming architecture of Netflix" },
-  { name: "WhatsApp", prompt: "Design the messaging system of WhatsApp" },
-  { name: "Instagram", prompt: "Design the backend architecture of Instagram" },
-];
-
-export function WorkspaceSidebar({ onGenerate, isLoading }: WorkspaceSidebarProps) {
-  const [prompt, setPrompt] = useState("");
-  const [history, setHistory] = useState<string[]>([]);
-
-  const handleGenerate = () => {
-    if (!prompt.trim()) return;
-    onGenerate(prompt);
-    if (!history.includes(prompt)) {
-      setHistory(prev => [prompt, ...prev].slice(0, 5));
-    }
-  };
-
-  const handleExampleClick = (examplePrompt: string) => {
-    setPrompt(examplePrompt);
-  };
-
+export function WorkspaceSidebar({ 
+  hasArchitecture, 
+  history, 
+  onHistoryClick, 
+  onReset,
+  currentPrompt 
+}: WorkspaceSidebarProps) {
   return (
-    <aside className="w-80 border-r border-border bg-sidebar flex flex-col">
+    <aside className="w-72 border-r border-border bg-sidebar flex flex-col">
       {/* Header */}
       <div className="p-4 border-b border-border">
         <Link to="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+          <motion.div 
+            whileHover={{ rotate: 180 }}
+            transition={{ duration: 0.3 }}
+            className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center"
+          >
             <Cpu className="w-4 h-4 text-primary" />
-          </div>
+          </motion.div>
           <span className="font-semibold text-foreground">ArchitectAI</span>
         </Link>
       </div>
 
-      {/* Prompt Section */}
-      <div className="p-4 border-b border-border">
-        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 block">
-          Describe your system
-        </label>
-        <Textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Design the backend architecture of Uber..."
-          className="min-h-[120px] resize-none bg-background border-border text-foreground placeholder:text-muted-foreground focus:ring-1 focus:ring-primary/50"
-        />
-        <Button
-          onClick={handleGenerate}
-          disabled={!prompt.trim() || isLoading}
-          className="w-full mt-3"
-          variant="hero"
-        >
-          {isLoading ? (
-            <>
-              <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+      {/* Current Project */}
+      {hasArchitecture && currentPrompt && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center justify-between mb-2">
+            <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              Current Design
+            </label>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                onClick={onReset}
+                className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
               >
-                <Sparkles className="w-4 h-4" />
-              </motion.div>
-              Generating...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4" />
-              Generate Architecture
-            </>
-          )}
-        </Button>
-      </div>
-
-      {/* Examples */}
-      <div className="p-4 border-b border-border">
-        <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 block">
-          Example Systems
-        </label>
-        <div className="space-y-1">
-          {examplePrompts.map((example) => (
-            <motion.button
-              key={example.name}
-              onClick={() => handleExampleClick(example.prompt)}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors text-left group"
-              whileHover={{ x: 4 }}
-              transition={{ duration: 0.2 }}
-            >
-              <span>{example.name}</span>
-              <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </motion.button>
-          ))}
+                <RotateCcw className="w-3 h-3 mr-1" />
+                New
+              </Button>
+            </motion.div>
+          </div>
+          <p className="text-sm text-foreground line-clamp-2">{currentPrompt}</p>
         </div>
-      </div>
+      )}
 
       {/* History */}
       {history.length > 0 && (
         <div className="p-4 flex-1 overflow-auto">
           <label className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3 flex items-center gap-2">
             <Clock className="w-3 h-3" />
-            Recent
+            History
           </label>
-          <div className="space-y-1">
+          <div className="space-y-1 mt-3">
             {history.map((item, i) => (
-              <button
+              <motion.button
                 key={i}
-                onClick={() => setPrompt(item)}
-                className="w-full text-left px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors truncate"
+                onClick={() => onHistoryClick(item)}
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.05 }}
+                whileHover={{ x: 4, backgroundColor: "hsl(var(--secondary))" }}
+                className="w-full text-left px-3 py-2.5 rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors truncate group flex items-center justify-between"
               >
-                {item}
-              </button>
+                <span className="truncate">{item}</span>
+                <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              </motion.button>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!hasArchitecture && history.length === 0 && (
+        <div className="flex-1 flex items-center justify-center p-6">
+          <div className="text-center">
+            <motion.div
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-12 h-12 rounded-xl bg-card border border-border flex items-center justify-center mx-auto mb-3"
+            >
+              <Clock className="w-6 h-6 text-muted-foreground" />
+            </motion.div>
+            <p className="text-sm text-muted-foreground">
+              Your design history will appear here
+            </p>
           </div>
         </div>
       )}

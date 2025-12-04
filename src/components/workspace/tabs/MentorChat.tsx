@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User } from "lucide-react";
+import { Send, Bot, User, Sparkles } from "lucide-react";
 import { ArchitectureData } from "@/types/architecture";
 
 interface MentorChatProps {
@@ -70,6 +70,12 @@ The key is ensuring no single point of failure while maintaining data consistenc
 For a ride-sharing platform with high event volume and need for audit trails, Kafka is the better choice.`,
 };
 
+const suggestedQuestions = [
+  "Why is Redis used here?",
+  "How can this scale horizontally?",
+  "What are the trade-offs?",
+];
+
 export function MentorChat({ architecture }: MentorChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -89,6 +95,7 @@ What would you like to explore?`,
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isFocused, setIsFocused] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -111,7 +118,6 @@ What would you like to explore?`,
     setInput("");
     setIsTyping(true);
 
-    // Simulate AI response
     await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const lowerInput = input.toLowerCase();
@@ -142,27 +148,38 @@ What would you like to explore?`,
     }
   };
 
+  const handleSuggestedQuestion = (question: string) => {
+    setInput(question);
+  };
+
   return (
     <div className="h-full flex flex-col max-w-3xl mx-auto">
       {/* Messages */}
       <div className="flex-1 overflow-auto space-y-4 pb-4">
         <AnimatePresence>
-          {messages.map((message) => (
+          {messages.map((message, index) => (
             <motion.div
               key={message.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 10, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, delay: index === messages.length - 1 ? 0 : 0 }}
               className={`flex gap-3 ${
                 message.role === "user" ? "justify-end" : "justify-start"
               }`}
             >
               {message.role === "assistant" && (
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                  className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0"
+                >
                   <Bot className="w-4 h-4 text-primary" />
-                </div>
+                </motion.div>
               )}
-              <div
+              <motion.div
+                whileHover={{ scale: 1.01 }}
                 className={`max-w-[80%] rounded-xl px-4 py-3 ${
                   message.role === "user"
                     ? "bg-primary text-primary-foreground"
@@ -172,11 +189,16 @@ What would you like to explore?`,
                 <div className="text-sm whitespace-pre-wrap leading-relaxed">
                   {message.content}
                 </div>
-              </div>
+              </motion.div>
               {message.role === "user" && (
-                <div className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+                <motion.div 
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: "spring", stiffness: 200 }}
+                  className="w-8 h-8 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0"
+                >
                   <User className="w-4 h-4 text-muted-foreground" />
-                </div>
+                </motion.div>
               )}
             </motion.div>
           ))}
@@ -184,18 +206,30 @@ What would you like to explore?`,
 
         {isTyping && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             className="flex gap-3"
           >
             <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
               <Bot className="w-4 h-4 text-primary" />
             </div>
             <div className="bg-card border border-border rounded-xl px-4 py-3">
-              <div className="flex gap-1">
-                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" />
-                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: "0.2s" }} />
-                <span className="w-2 h-2 bg-muted-foreground rounded-full animate-pulse" style={{ animationDelay: "0.4s" }} />
+              <div className="flex gap-1.5 items-center">
+                <motion.span 
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
+                  className="w-2 h-2 bg-primary/50 rounded-full" 
+                />
+                <motion.span 
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
+                  className="w-2 h-2 bg-primary/50 rounded-full" 
+                />
+                <motion.span 
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
+                  className="w-2 h-2 bg-primary/50 rounded-full" 
+                />
               </div>
             </div>
           </motion.div>
@@ -203,22 +237,53 @@ What would you like to explore?`,
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Suggested Questions */}
+      {messages.length <= 2 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex flex-wrap gap-2 mb-4"
+        >
+          {suggestedQuestions.map((question, i) => (
+            <motion.button
+              key={question}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: i * 0.1 }}
+              whileHover={{ scale: 1.03, y: -1 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => handleSuggestedQuestion(question)}
+              className="px-3 py-1.5 rounded-full text-xs bg-secondary text-secondary-foreground border border-border hover:border-primary/30 transition-colors"
+            >
+              <Sparkles className="w-3 h-3 inline mr-1.5" />
+              {question}
+            </motion.button>
+          ))}
+        </motion.div>
+      )}
+
       {/* Input */}
       <div className="border-t border-border pt-4">
-        <div className="flex gap-3">
+        <div className={`flex gap-3 p-1 rounded-xl transition-all duration-300 ${
+          isFocused ? "ring-2 ring-primary/20" : ""
+        }`}>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholder="Ask about the architecture..."
-            className="flex-1 bg-card border-border"
+            className="flex-1 bg-card border-border focus-visible:ring-0"
           />
-          <Button onClick={handleSend} disabled={!input.trim() || isTyping} variant="hero">
-            <Send className="w-4 h-4" />
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button onClick={handleSend} disabled={!input.trim() || isTyping} variant="hero">
+              <Send className="w-4 h-4" />
+            </Button>
+          </motion.div>
         </div>
-        <p className="text-xs text-muted-foreground mt-2">
-          Try asking: "Why is Redis used here?" or "How can this scale horizontally?"
+        <p className="text-xs text-muted-foreground mt-2 text-center">
+          Ask anything about the architecture design
         </p>
       </div>
     </div>
