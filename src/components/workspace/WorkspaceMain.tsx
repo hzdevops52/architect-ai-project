@@ -30,8 +30,8 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
     { id: "overview", label: "Overview", icon: Layout },
     { id: "diagrams", label: "Diagrams", icon: GitBranch },
     { id: "api", label: "API Specs", icon: Code },
-    { id: "mentor", label: "Mentor Chat", icon: MessageSquare },
-    { id: "evaluation", label: "Evaluation", icon: ClipboardCheck },
+    { id: "mentor", label: "Mentor", icon: MessageSquare },
+    { id: "evaluation", label: "Evaluate", icon: ClipboardCheck },
   ];
 
   // Show prompt input when no architecture and not loading
@@ -44,33 +44,29 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
   }
 
   return (
-    <main className="flex-1 flex flex-col overflow-hidden">
+    <main className="flex-1 flex flex-col overflow-hidden bg-background">
       {/* Tabs Header */}
-      <div className="border-b border-border bg-background">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="h-12 w-full justify-start rounded-none border-none bg-transparent px-4 gap-1">
-            {tabs.map((tab) => (
-              <TabsTrigger
-                key={tab.id}
-                value={tab.id}
-                className="relative data-[state=active]:bg-secondary data-[state=active]:text-foreground text-muted-foreground rounded-lg px-4 transition-all duration-200"
-              >
-                <motion.div
-                  className="flex items-center"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+      <div className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+        <div className="px-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="h-12 w-full justify-start rounded-none border-none bg-transparent gap-1 p-0">
+              {tabs.map((tab) => (
+                <TabsTrigger
+                  key={tab.id}
+                  value={tab.id}
+                  className="relative h-12 px-4 rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:text-foreground text-muted-foreground bg-transparent hover:text-foreground transition-all duration-200"
                 >
                   <tab.icon className="w-4 h-4 mr-2" />
                   {tab.label}
-                </motion.div>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-auto p-6">
+      <div className="flex-1 overflow-auto">
         <AnimatePresence mode="wait">
           {isLoading ? (
             <motion.div
@@ -78,7 +74,7 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="h-full"
+              className="h-full p-6"
             >
               <Tabs value={activeTab} className="h-full">
                 <TabsContent value="overview" className="mt-0 h-full">
@@ -101,25 +97,25 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
           ) : (
             <motion.div
               key="content"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="h-full"
             >
               <Tabs value={activeTab} className="h-full">
-                <TabsContent value="overview" className="mt-0 h-full">
+                <TabsContent value="overview" className="mt-0 h-full p-6">
                   <ArchitectureOverview architecture={architecture!} />
                 </TabsContent>
-                <TabsContent value="diagrams" className="mt-0 h-full">
+                <TabsContent value="diagrams" className="mt-0 h-full p-6">
                   <DiagramsView diagrams={architecture!.diagrams} />
                 </TabsContent>
-                <TabsContent value="api" className="mt-0 h-full">
+                <TabsContent value="api" className="mt-0 h-full p-6">
                   <ApiSpecsView endpoints={architecture!.apiEndpoints} />
                 </TabsContent>
-                <TabsContent value="mentor" className="mt-0 h-full">
+                <TabsContent value="mentor" className="mt-0 h-full p-6">
                   <MentorChat architecture={architecture!} />
                 </TabsContent>
-                <TabsContent value="evaluation" className="mt-0 h-full">
+                <TabsContent value="evaluation" className="mt-0 h-full p-6">
                   <EvaluationView />
                 </TabsContent>
               </Tabs>
