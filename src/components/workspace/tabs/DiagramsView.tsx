@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Download, Copy, Check } from "lucide-react";
+import { Download, Copy, Check, ZoomIn, ZoomOut } from "lucide-react";
 import mermaid from "mermaid";
 import { toast } from "@/hooks/use-toast";
 
@@ -14,7 +14,6 @@ interface DiagramsViewProps {
   };
 }
 
-// Initialize mermaid with dark theme
 mermaid.initialize({
   startOnLoad: false,
   theme: "dark",
@@ -43,12 +42,13 @@ function MermaidDiagram({ code, id }: { code: string; id: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [svg, setSvg] = useState<string>("");
   const [copied, setCopied] = useState(false);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     const renderDiagram = async () => {
       if (containerRef.current) {
         try {
-          const { svg } = await mermaid.render(`mermaid-${id}`, code);
+          const { svg } = await mermaid.render(`mermaid-${id}-${Date.now()}`, code);
           setSvg(svg);
         } catch (error) {
           console.error("Mermaid render error:", error);
@@ -76,64 +76,80 @@ function MermaidDiagram({ code, id }: { code: string; id: string }) {
     toast({ title: "Diagram exported as SVG" });
   };
 
+  const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.2, 2));
+  const handleZoomOut = () => setZoom(prev => Math.max(prev - 0.2, 0.5));
+
   return (
-    <div className="relative">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="relative"
+    >
       <div className="absolute top-4 right-4 flex gap-2 z-10">
-        <Button
-          variant="panel"
-          size="sm"
-          onClick={handleCopy}
-        >
-          {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-          {copied ? "Copied" : "Copy Code"}
-        </Button>
-        <Button
-          variant="panel"
-          size="sm"
-          onClick={handleExport}
-        >
-          <Download className="w-4 h-4" />
-          Export SVG
-        </Button>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button variant="panel" size="sm" onClick={handleZoomOut}>
+            <ZoomOut className="w-4 h-4" />
+          </Button>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button variant="panel" size="sm" onClick={handleZoomIn}>
+            <ZoomIn className="w-4 h-4" />
+          </Button>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button variant="panel" size="sm" onClick={handleCopy}>
+            {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+            {copied ? "Copied" : "Copy"}
+          </Button>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button variant="panel" size="sm" onClick={handleExport}>
+            <Download className="w-4 h-4" />
+            Export
+          </Button>
+        </motion.div>
       </div>
       <div
         ref={containerRef}
-        className="p-8 pt-16 rounded-xl bg-card border border-border overflow-auto min-h-[400px]"
+        className="p-8 pt-16 rounded-xl bg-card border border-border overflow-auto min-h-[400px] transition-transform duration-300"
+        style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}
         dangerouslySetInnerHTML={{ __html: svg }}
       />
-    </div>
+    </motion.div>
   );
 }
 
 export function DiagramsView({ diagrams }: DiagramsViewProps) {
   const [activeTab, setActiveTab] = useState("erd");
 
+  const tabs = [
+    { id: "erd", label: "ER Diagram" },
+    { id: "architecture", label: "Architecture" },
+    { id: "sequence", label: "Sequence" },
+  ];
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       className="h-full"
     >
       <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
         <TabsList className="bg-card border border-border mb-6">
-          <TabsTrigger
-            value="erd"
-            className="data-[state=active]:bg-secondary data-[state=active]:text-foreground"
-          >
-            ER Diagram
-          </TabsTrigger>
-          <TabsTrigger
-            value="architecture"
-            className="data-[state=active]:bg-secondary data-[state=active]:text-foreground"
-          >
-            Architecture
-          </TabsTrigger>
-          <TabsTrigger
-            value="sequence"
-            className="data-[state=active]:bg-secondary data-[state=active]:text-foreground"
-          >
-            Sequence
-          </TabsTrigger>
+          {tabs.map((tab) => (
+            <TabsTrigger
+              key={tab.id}
+              value={tab.id}
+              className="data-[state=active]:bg-secondary data-[state=active]:text-foreground relative"
+            >
+              <motion.span
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {tab.label}
+              </motion.span>
+            </TabsTrigger>
+          ))}
         </TabsList>
 
         <TabsContent value="erd" className="mt-0">
