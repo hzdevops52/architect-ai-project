@@ -7,15 +7,17 @@ import { DiagramsView } from "./tabs/DiagramsView";
 import { ApiSpecsView } from "./tabs/ApiSpecsView";
 import { MentorChat } from "./tabs/MentorChat";
 import { EvaluationView } from "./tabs/EvaluationView";
+import { ScalingView } from "./tabs/ScalingView";
 import { PromptInput } from "./PromptInput";
 import { 
   OverviewSkeleton, 
   DiagramsSkeleton, 
   ApiSpecsSkeleton, 
   ChatSkeleton, 
-  EvaluationSkeleton 
+  EvaluationSkeleton,
+  ScalingSkeleton 
 } from "./SkeletonLoaders";
-import { Layout, GitBranch, Code, MessageSquare, ClipboardCheck } from "lucide-react";
+import { Layout, GitBranch, Code, MessageSquare, ClipboardCheck, TrendingUp } from "lucide-react";
 
 interface WorkspaceMainProps {
   architecture: ArchitectureData | null;
@@ -30,6 +32,7 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
     { id: "overview", label: "Overview", icon: Layout },
     { id: "diagrams", label: "Diagrams", icon: GitBranch },
     { id: "api", label: "API Specs", icon: Code },
+    { id: "scaling", label: "Scaling", icon: TrendingUp },
     { id: "mentor", label: "Mentor", icon: MessageSquare },
     { id: "evaluation", label: "Evaluate", icon: ClipboardCheck },
   ];
@@ -74,6 +77,7 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="h-full p-6"
             >
               <Tabs value={activeTab} className="h-full">
@@ -85,6 +89,9 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
                 </TabsContent>
                 <TabsContent value="api" className="mt-0 h-full">
                   <ApiSpecsSkeleton />
+                </TabsContent>
+                <TabsContent value="scaling" className="mt-0 h-full">
+                  <ScalingSkeleton />
                 </TabsContent>
                 <TabsContent value="mentor" className="mt-0 h-full">
                   <ChatSkeleton />
@@ -100,6 +107,7 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               className="h-full"
             >
               <Tabs value={activeTab} className="h-full">
@@ -111,6 +119,9 @@ export function WorkspaceMain({ architecture, isLoading, onGenerate }: Workspace
                 </TabsContent>
                 <TabsContent value="api" className="mt-0 h-full p-6">
                   <ApiSpecsView endpoints={architecture!.apiEndpoints} />
+                </TabsContent>
+                <TabsContent value="scaling" className="mt-0 h-full p-6">
+                  <ScalingView scaling={architecture!.scaling} />
                 </TabsContent>
                 <TabsContent value="mentor" className="mt-0 h-full p-6">
                   <MentorChat architecture={architecture!} />

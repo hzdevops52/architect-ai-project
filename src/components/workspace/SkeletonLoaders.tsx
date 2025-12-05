@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 function SkeletonPulse({ className }: { className?: string }) {
   return (
-    <div className={`bg-secondary rounded animate-pulse ${className}`} />
+    <div className={`bg-secondary/80 rounded animate-pulse ${className}`} />
   );
 }
 
@@ -22,7 +22,7 @@ export function OverviewSkeleton() {
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            transition={{ delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="p-4 rounded-xl bg-card border border-border"
           >
             <div className="flex items-center gap-3">
@@ -45,7 +45,7 @@ export function OverviewSkeleton() {
               key={i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 + i * 0.05 }}
+              transition={{ delay: 0.1 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
               className="p-5 rounded-xl bg-card border border-border"
             >
               <SkeletonPulse className="h-5 w-32 mb-2" />
@@ -80,7 +80,7 @@ export function OverviewSkeleton() {
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 + i * 0.05 }}
+            transition={{ delay: 0.3 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="p-5 rounded-xl bg-card border border-border"
           >
             <div className="flex items-center gap-2 mb-3">
@@ -151,7 +151,7 @@ export function ApiSpecsSkeleton() {
             key={i}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.05 }}
+            transition={{ delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
             className="rounded-xl bg-card border border-border p-5"
           >
             <div className="flex items-center gap-4">
@@ -190,7 +190,7 @@ export function ChatSkeleton() {
         ))}
       </div>
 
-      <div className="flex gap-3 p-1 rounded-xl bg-card border border-border">
+      <div className="flex gap-3 p-1.5 rounded-xl bg-card border border-border">
         <SkeletonPulse className="flex-1 h-10 rounded-lg" />
         <SkeletonPulse className="w-16 h-10 rounded-lg" />
       </div>
@@ -213,6 +213,97 @@ export function EvaluationSkeleton() {
         <div className="px-5 py-4 bg-secondary/30 border-t border-border flex items-center justify-between">
           <SkeletonPulse className="h-4 w-64" />
           <SkeletonPulse className="h-9 w-32 rounded-lg" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export function ScalingSkeleton() {
+  return (
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Header */}
+      <div>
+        <SkeletonPulse className="h-8 w-64 mb-2" />
+        <SkeletonPulse className="h-4 w-96" />
+      </div>
+
+      {/* Metrics */}
+      <div>
+        <SkeletonPulse className="h-4 w-40 mb-4" />
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              className="p-4 rounded-xl bg-card border border-border"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <SkeletonPulse className="h-3 w-20" />
+                <SkeletonPulse className="h-5 w-5 rounded" />
+              </div>
+              <SkeletonPulse className="h-7 w-16 mb-2" />
+              <SkeletonPulse className="h-1.5 w-full rounded-full" />
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Scaling Config */}
+      <div className="grid md:grid-cols-2 gap-6">
+        {[...Array(2)].map((_, i) => (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+            className="p-5 rounded-xl bg-card border border-border"
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <SkeletonPulse className="w-10 h-10 rounded-lg" />
+              <div className="flex-1">
+                <SkeletonPulse className="h-5 w-32 mb-1" />
+                <SkeletonPulse className="h-3 w-40" />
+              </div>
+              <SkeletonPulse className="h-5 w-16 rounded-full" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              {[...Array(2)].map((_, j) => (
+                <div key={j} className="p-3 rounded-lg bg-background border border-border">
+                  <SkeletonPulse className="h-3 w-16 mb-1" />
+                  <SkeletonPulse className="h-6 w-12" />
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Caching */}
+      <div>
+        <SkeletonPulse className="h-4 w-36 mb-4" />
+        <div className="grid md:grid-cols-3 gap-4">
+          {[...Array(3)].map((_, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+              className="p-4 rounded-xl bg-card border border-border"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <SkeletonPulse className="w-2 h-2 rounded-full" />
+                  <SkeletonPulse className="h-4 w-24" />
+                </div>
+                <SkeletonPulse className="h-4 w-12 rounded" />
+              </div>
+              <SkeletonPulse className="h-4 w-full mb-3" />
+              <SkeletonPulse className="h-3 w-20" />
+            </motion.div>
+          ))}
         </div>
       </div>
     </div>

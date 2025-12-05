@@ -1,4 +1,179 @@
-import { ArchitectureData } from "@/types/architecture";
+import { ArchitectureData, ScalingData } from "@/types/architecture";
+
+const defaultScaling: ScalingData = {
+  overview: "Designed for high availability and horizontal scalability with auto-scaling policies, distributed caching, and load balancing across multiple regions.",
+  scalingConfig: {
+    horizontal: {
+      enabled: true,
+      minInstances: 2,
+      maxInstances: 50,
+      targetCPU: 70,
+      targetMemory: 75
+    },
+    vertical: {
+      enabled: true,
+      cpuLimit: "4 vCPU",
+      memoryLimit: "8 GB"
+    }
+  },
+  cachingStrategies: [
+    {
+      layer: "Application Cache",
+      technology: "Redis Cluster",
+      ttl: "15 minutes",
+      invalidation: "Event-driven",
+      useCase: "Session data, user preferences, frequently accessed queries"
+    },
+    {
+      layer: "CDN Cache",
+      technology: "CloudFront",
+      ttl: "24 hours",
+      invalidation: "Version-based",
+      useCase: "Static assets, images, frontend bundles"
+    },
+    {
+      layer: "Database Cache",
+      technology: "Read Replicas",
+      ttl: "Real-time",
+      invalidation: "Replication lag",
+      useCase: "Read-heavy queries, reporting data"
+    }
+  ],
+  loadBalancing: {
+    type: "Application Load Balancer",
+    algorithm: "Round Robin with Health Checks",
+    healthCheck: "/health",
+    features: ["SSL Termination", "Path-based Routing", "Sticky Sessions", "Auto-failover", "DDoS Protection"]
+  },
+  performanceMetrics: [
+    { name: "Response Time", target: "200ms", current: "145ms", status: "healthy" },
+    { name: "Uptime", target: "99.9%", current: "99.95%", status: "healthy" },
+    { name: "Error Rate", target: "<0.1%", current: "0.05%", status: "healthy" },
+    { name: "Throughput", target: "10k/s", current: "8.5k/s", status: "warning" }
+  ],
+  optimizations: [
+    {
+      category: "Database",
+      title: "Query Optimization",
+      description: "Implement query caching and use prepared statements to reduce database load by 40%",
+      impact: "high"
+    },
+    {
+      category: "API",
+      title: "Response Compression",
+      description: "Enable gzip compression for API responses to reduce bandwidth by 70%",
+      impact: "medium"
+    },
+    {
+      category: "Infrastructure",
+      title: "Connection Pooling",
+      description: "Use connection pooling to reduce database connection overhead",
+      impact: "high"
+    }
+  ],
+  bottlenecks: [
+    {
+      component: "Database Writes",
+      issue: "High write contention during peak hours causes increased latency",
+      solution: "Implement write-behind caching and batch operations"
+    },
+    {
+      component: "API Gateway",
+      issue: "Single point of failure without proper redundancy",
+      solution: "Deploy multi-region API gateways with automatic failover"
+    }
+  ]
+};
+
+const uberScaling: ScalingData = {
+  overview: "Real-time location tracking and ride matching require sub-100ms latency. Architecture designed for 10M+ concurrent users with geographic sharding and edge computing.",
+  scalingConfig: {
+    horizontal: {
+      enabled: true,
+      minInstances: 5,
+      maxInstances: 100,
+      targetCPU: 60,
+      targetMemory: 70
+    },
+    vertical: {
+      enabled: true,
+      cpuLimit: "8 vCPU",
+      memoryLimit: "16 GB"
+    }
+  },
+  cachingStrategies: [
+    {
+      layer: "Location Cache",
+      technology: "Redis Geo",
+      ttl: "5 seconds",
+      invalidation: "Time-based",
+      useCase: "Real-time driver locations, nearby driver queries"
+    },
+    {
+      layer: "Surge Pricing",
+      technology: "Redis",
+      ttl: "1 minute",
+      invalidation: "Event-driven",
+      useCase: "Dynamic pricing calculations, demand zones"
+    },
+    {
+      layer: "User Sessions",
+      technology: "Redis Cluster",
+      ttl: "30 minutes",
+      invalidation: "Sliding expiry",
+      useCase: "Active ride sessions, user authentication"
+    }
+  ],
+  loadBalancing: {
+    type: "Geographic Load Balancer",
+    algorithm: "Latency-based Routing",
+    healthCheck: "/api/health",
+    features: ["Geo-routing", "WebSocket Support", "Rate Limiting", "Circuit Breaker", "Auto-failover"]
+  },
+  performanceMetrics: [
+    { name: "Match Latency", target: "50ms", current: "42ms", status: "healthy" },
+    { name: "Location Update", target: "100ms", current: "85ms", status: "healthy" },
+    { name: "Availability", target: "99.99%", current: "99.97%", status: "warning" },
+    { name: "Concurrent Rides", target: "1M", current: "850k", status: "healthy" }
+  ],
+  optimizations: [
+    {
+      category: "Real-time",
+      title: "WebSocket Optimization",
+      description: "Use binary protocols for location updates to reduce payload size by 60%",
+      impact: "high"
+    },
+    {
+      category: "Database",
+      title: "Geographic Sharding",
+      description: "Shard ride data by city/region to improve query performance",
+      impact: "high"
+    },
+    {
+      category: "Matching",
+      title: "ML-based Matching",
+      description: "Use machine learning for optimal driver-rider matching",
+      impact: "medium"
+    }
+  ],
+  bottlenecks: [
+    {
+      component: "Location Service",
+      issue: "High-frequency updates create write amplification",
+      solution: "Batch location updates and use append-only logs"
+    },
+    {
+      component: "Payment Processing",
+      issue: "Third-party payment gateway latency",
+      solution: "Implement async payment processing with eventual consistency"
+    },
+    {
+      component: "Notification Delivery",
+      issue: "Push notification delays during peak hours",
+      solution: "Priority queues and multi-provider failover"
+    }
+  ]
+};
 
 export function generateMockArchitecture(prompt: string): ArchitectureData {
   const systemName = prompt.toLowerCase().includes("uber") ? "Uber" :
@@ -126,6 +301,7 @@ export function generateMockArchitecture(prompt: string): ArchitectureData {
       ],
       scalingStrategy: "Horizontal scaling with auto-scaling groups based on CPU and request metrics. Location service uses Redis Cluster for distributed caching. Database sharding by geographic region. Event-driven architecture with Kafka for async processing.",
       faultTolerance: "Circuit breakers on all service-to-service calls. Retry with exponential backoff. Multi-region deployment with automatic failover. Health checks and self-healing containers. Event sourcing for critical business operations.",
+      scaling: uberScaling,
       diagrams: {
         erd: `erDiagram
     USERS ||--o{ RIDES : requests
@@ -290,6 +466,7 @@ export function generateMockArchitecture(prompt: string): ArchitectureData {
       ],
       scalingStrategy: "Global CDN with edge caching. Microservices with auto-scaling. Multi-region deployment.",
       faultTolerance: "Chaos engineering practices. Circuit breakers. Graceful degradation.",
+      scaling: defaultScaling,
       diagrams: {
         erd: `erDiagram
     CONTENT ||--o{ EPISODES : contains
@@ -386,6 +563,7 @@ export function generateMockArchitecture(prompt: string): ArchitectureData {
     ],
     scalingStrategy: "Horizontal scaling with container orchestration. Database read replicas for query distribution.",
     faultTolerance: "Health checks, automatic restarts, and circuit breakers for resilient operation.",
+    scaling: defaultScaling,
     diagrams: {
       erd: `erDiagram
     ENTITY {
