@@ -14,43 +14,37 @@ const exampleSystems = [
     name: "Uber", 
     prompt: "Design the backend architecture of Uber",
     description: "Ride-sharing, real-time tracking",
-    gradient: "from-orange-500/10 to-red-500/10",
-    border: "hover:border-orange-500/30"
+    accent: "group-hover:text-teal-400"
   },
   { 
     name: "Netflix", 
     prompt: "Design the streaming architecture of Netflix",
     description: "Video streaming, recommendations",
-    gradient: "from-red-500/10 to-pink-500/10",
-    border: "hover:border-red-500/30"
+    accent: "group-hover:text-teal-400"
   },
   { 
     name: "WhatsApp", 
     prompt: "Design the messaging system of WhatsApp",
     description: "Real-time messaging, E2E encryption",
-    gradient: "from-green-500/10 to-emerald-500/10",
-    border: "hover:border-green-500/30"
+    accent: "group-hover:text-teal-400"
   },
   { 
     name: "Stripe", 
     prompt: "Design the payment processing architecture of Stripe",
     description: "Payment processing, fraud detection",
-    gradient: "from-purple-500/10 to-indigo-500/10",
-    border: "hover:border-purple-500/30"
+    accent: "group-hover:text-teal-400"
   },
   { 
     name: "Twitter", 
     prompt: "Design the real-time feed system of Twitter",
     description: "Social feed, real-time updates",
-    gradient: "from-blue-500/10 to-cyan-500/10",
-    border: "hover:border-blue-500/30"
+    accent: "group-hover:text-teal-400"
   },
   { 
     name: "Spotify", 
     prompt: "Design the music streaming architecture of Spotify",
     description: "Audio streaming, playlists",
-    gradient: "from-green-500/10 to-teal-500/10",
-    border: "hover:border-green-500/30"
+    accent: "group-hover:text-teal-400"
   },
 ];
 
@@ -78,7 +72,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-2xl"
       >
         {/* Header */}
@@ -86,7 +80,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
+            transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3"
           >
             What would you like to design?
@@ -94,7 +88,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="text-muted-foreground"
           >
             Describe any system to get a complete architecture breakdown
@@ -105,11 +99,11 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
+          transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className={`relative rounded-xl bg-card border-2 transition-all duration-300 ${
             isFocused 
-              ? "border-primary shadow-lg shadow-primary/5" 
-              : "border-border hover:border-border/80"
+              ? "border-primary/60 shadow-lg shadow-primary/10" 
+              : "border-border hover:border-primary/30"
           }`}
         >
           <Textarea
@@ -119,7 +113,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
             onBlur={() => setIsFocused(false)}
             onKeyDown={handleKeyDown}
             placeholder="e.g., Design the backend architecture of a ride-sharing platform like Uber with real-time location tracking, payment processing, and driver matching..."
-            className="min-h-[120px] resize-none bg-transparent border-none text-foreground placeholder:text-muted-foreground/60 focus-visible:ring-0 text-base p-5 pb-14"
+            className="min-h-[120px] resize-none bg-transparent border-none text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-0 text-base p-5 pb-14"
           />
           <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -136,7 +130,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
               onClick={handleGenerate}
               disabled={!prompt.trim() || isLoading}
               size="sm"
-              className="bg-foreground text-background hover:bg-foreground/90 h-8"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 h-8 shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
             >
               {isLoading ? (
                 <>
@@ -162,7 +156,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
+          transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="mt-10"
         >
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4 text-center">
@@ -175,13 +169,14 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
                 onClick={() => handleExampleClick(example.prompt)}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.45 + index * 0.05, duration: 0.4 }}
-                whileHover={{ y: -2 }}
+                transition={{ delay: 0.45 + index * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ y: -3, transition: { duration: 0.2 } }}
                 whileTap={{ scale: 0.98 }}
-                className={`relative p-4 rounded-xl bg-gradient-to-br ${example.gradient} border border-border ${example.border} transition-all duration-300 text-left group overflow-hidden`}
+                className="relative p-4 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-secondary/50 transition-all duration-300 text-left group overflow-hidden"
               >
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative z-10">
-                  <h3 className="font-medium text-foreground mb-0.5 group-hover:text-primary transition-colors">
+                  <h3 className={`font-medium text-foreground mb-0.5 transition-colors duration-200 ${example.accent}`}>
                     {example.name}
                   </h3>
                   <p className="text-xs text-muted-foreground line-clamp-1">
@@ -201,7 +196,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           className="mt-10 text-center"
         >
           <p className="text-xs text-muted-foreground">
-            <span className="text-foreground/60">Pro tip:</span> Be specific about scale, features, and constraints for better results
+            <span className="text-primary/80">Pro tip:</span> Be specific about scale, features, and constraints for better results
           </p>
         </motion.div>
       </motion.div>

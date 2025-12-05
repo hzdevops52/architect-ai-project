@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Send, Bot, User, Sparkles, Copy, Check } from "lucide-react";
+import { Send, Bot, User, Copy, Check } from "lucide-react";
 import { ArchitectureData } from "@/types/architecture";
 import { toast } from "@/hooks/use-toast";
 
@@ -166,6 +166,7 @@ What would you like to explore?`,
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
           className="mb-4"
         >
           <h1 className="text-2xl font-semibold text-foreground tracking-tight mb-1">
@@ -193,6 +194,7 @@ What would you like to explore?`,
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="flex flex-wrap gap-2 mb-4"
           >
             {suggestedQuestions.map((question, i) => (
@@ -200,9 +202,11 @@ What would you like to explore?`,
                 key={question}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.05 }}
+                transition={{ delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setInput(question)}
-                className="px-3 py-1.5 rounded-full text-xs bg-secondary text-secondary-foreground border border-border hover:border-primary/30 hover:bg-secondary/80 transition-all"
+                className="px-3 py-1.5 rounded-full text-xs bg-secondary text-secondary-foreground border border-border hover:border-primary/40 hover:bg-primary/10 hover:text-primary transition-all duration-200"
               >
                 {question}
               </motion.button>
@@ -211,7 +215,12 @@ What would you like to explore?`,
         )}
 
         {/* Input */}
-        <div className="flex gap-3 p-1 rounded-xl bg-card border border-border">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="flex gap-3 p-1.5 rounded-xl bg-card border border-border focus-within:border-primary/40 transition-colors duration-200"
+        >
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -223,11 +232,11 @@ What would you like to explore?`,
             onClick={handleSend} 
             disabled={!input.trim() || isTyping}
             size="sm"
-            className="h-10 px-4 bg-foreground text-background hover:bg-foreground/90"
+            className="h-10 px-4 bg-primary text-primary-foreground hover:bg-primary/90 shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
           >
             <Send className="w-4 h-4" />
           </Button>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
@@ -246,21 +255,27 @@ function MessageBubble({ message }: { message: Message }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className={`flex gap-3 ${isAssistant ? "justify-start" : "justify-end"}`}
     >
       {isAssistant && (
-        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+        <motion.div 
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center flex-shrink-0 ring-1 ring-primary/20"
+        >
           <Bot className="w-4 h-4 text-primary" />
-        </div>
+        </motion.div>
       )}
       <div className={`group max-w-[85%] ${isAssistant ? "" : "order-first"}`}>
         <div
           className={`rounded-xl px-4 py-3 ${
             isAssistant
               ? "bg-card border border-border"
-              : "bg-primary text-primary-foreground"
+              : "bg-primary text-primary-foreground shadow-md"
           }`}
         >
           <div className={`text-sm leading-relaxed whitespace-pre-wrap ${isAssistant ? "prose prose-sm prose-invert max-w-none" : ""}`}>
@@ -276,10 +291,10 @@ function MessageBubble({ message }: { message: Message }) {
           </div>
         </div>
         {isAssistant && (
-          <div className="flex items-center gap-2 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-2 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <button
               onClick={handleCopy}
-              className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+              className="text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors duration-200"
             >
               {copied ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
               {copied ? "Copied" : "Copy"}
@@ -299,11 +314,12 @@ function MessageBubble({ message }: { message: Message }) {
 function TypingIndicator() {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
       className="flex gap-3"
     >
-      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+      <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center ring-1 ring-primary/20">
         <Bot className="w-4 h-4 text-primary" />
       </div>
       <div className="bg-card border border-border rounded-xl px-4 py-3">
@@ -311,9 +327,9 @@ function TypingIndicator() {
           {[0, 1, 2].map((i) => (
             <motion.span
               key={i}
-              animate={{ opacity: [0.4, 1, 0.4] }}
-              transition={{ duration: 1, repeat: Infinity, delay: i * 0.2 }}
-              className="w-2 h-2 bg-primary/50 rounded-full"
+              animate={{ opacity: [0.3, 1, 0.3], scale: [0.85, 1, 0.85] }}
+              transition={{ duration: 1.2, repeat: Infinity, delay: i * 0.15 }}
+              className="w-2 h-2 bg-primary/60 rounded-full"
             />
           ))}
         </div>
