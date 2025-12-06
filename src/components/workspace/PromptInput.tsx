@@ -13,38 +13,32 @@ const exampleSystems = [
   { 
     name: "Uber", 
     prompt: "Design the backend architecture of Uber",
-    description: "Ride-sharing, real-time tracking",
-    accent: "group-hover:text-teal-400"
+    description: "Ride-sharing, real-time tracking"
   },
   { 
     name: "Netflix", 
     prompt: "Design the streaming architecture of Netflix",
-    description: "Video streaming, recommendations",
-    accent: "group-hover:text-teal-400"
+    description: "Video streaming, recommendations"
   },
   { 
     name: "WhatsApp", 
     prompt: "Design the messaging system of WhatsApp",
-    description: "Real-time messaging, E2E encryption",
-    accent: "group-hover:text-teal-400"
+    description: "Real-time messaging, E2E encryption"
   },
   { 
     name: "Stripe", 
     prompt: "Design the payment processing architecture of Stripe",
-    description: "Payment processing, fraud detection",
-    accent: "group-hover:text-teal-400"
+    description: "Payment processing, fraud detection"
   },
   { 
     name: "Twitter", 
     prompt: "Design the real-time feed system of Twitter",
-    description: "Social feed, real-time updates",
-    accent: "group-hover:text-teal-400"
+    description: "Social feed, real-time updates"
   },
   { 
     name: "Spotify", 
     prompt: "Design the music streaming architecture of Spotify",
-    description: "Audio streaming, playlists",
-    accent: "group-hover:text-teal-400"
+    description: "Audio streaming, playlists"
   },
 ];
 
@@ -68,7 +62,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-full px-6 py-16">
+    <div className="flex flex-col items-center justify-center min-h-full px-4 sm:px-6 py-8 sm:py-16">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,12 +70,12 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
         className="w-full max-w-2xl"
       >
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8 sm:mb-10">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3"
+            className="text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground tracking-tight mb-3"
           >
             What would you like to design?
           </motion.h1>
@@ -89,7 +83,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="text-muted-foreground"
+            className="text-muted-foreground text-sm sm:text-base"
           >
             Describe any system to get a complete architecture breakdown
           </motion.p>
@@ -112,11 +106,11 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             onKeyDown={handleKeyDown}
-            placeholder="e.g., Design the backend architecture of a ride-sharing platform like Uber with real-time location tracking, payment processing, and driver matching..."
-            className="min-h-[120px] resize-none bg-transparent border-none text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-0 text-base p-5 pb-14"
+            placeholder="e.g., Design the backend architecture of a ride-sharing platform like Uber with real-time location tracking..."
+            className="min-h-[100px] sm:min-h-[120px] resize-none bg-transparent border-none text-foreground placeholder:text-muted-foreground/50 focus-visible:ring-0 text-sm sm:text-base p-4 sm:p-5 pb-16 sm:pb-14"
           />
-          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between gap-2">
+            <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
               <kbd className="px-1.5 py-0.5 rounded bg-secondary border border-border font-mono text-[10px]">
                 <Command className="w-2.5 h-2.5 inline" />
               </kbd>
@@ -130,7 +124,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
               onClick={handleGenerate}
               disabled={!prompt.trim() || isLoading}
               size="sm"
-              className="bg-primary text-primary-foreground hover:bg-primary/90 h-8 shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all duration-300"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 h-8 shadow-md hover:shadow-lg hover:shadow-primary/20 transition-all duration-300 ml-auto"
             >
               {isLoading ? (
                 <>
@@ -140,12 +134,12 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                   </motion.div>
-                  <span className="ml-1.5">Generating...</span>
+                  <span className="ml-1.5 hidden xs:inline">Generating...</span>
                 </>
               ) : (
                 <>
-                  Generate
-                  <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                  <span className="hidden xs:inline">Generate</span>
+                  <ArrowRight className="w-3.5 h-3.5 xs:ml-1.5" />
                 </>
               )}
             </Button>
@@ -157,12 +151,12 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="mt-10"
+          className="mt-8 sm:mt-10"
         >
           <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest mb-4 text-center">
             Or start with an example
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
             {exampleSystems.map((example, index) => (
               <motion.button
                 key={example.name}
@@ -172,11 +166,11 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
                 transition={{ delay: 0.45 + index * 0.05, duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ y: -3, transition: { duration: 0.2 } }}
                 whileTap={{ scale: 0.98 }}
-                className="relative p-4 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-secondary/50 transition-all duration-300 text-left group overflow-hidden"
+                className="relative p-3 sm:p-4 rounded-xl bg-card border border-border hover:border-primary/40 hover:bg-secondary/50 transition-all duration-300 text-left group overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <div className="relative z-10">
-                  <h3 className={`font-medium text-foreground mb-0.5 transition-colors duration-200 ${example.accent}`}>
+                  <h3 className="font-medium text-foreground text-sm sm:text-base mb-0.5 group-hover:text-primary transition-colors duration-200">
                     {example.name}
                   </h3>
                   <p className="text-xs text-muted-foreground line-clamp-1">
@@ -193,7 +187,7 @@ export function PromptInput({ onGenerate, isLoading }: PromptInputProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7, duration: 0.5 }}
-          className="mt-10 text-center"
+          className="mt-8 sm:mt-10 text-center"
         >
           <p className="text-xs text-muted-foreground">
             <span className="text-primary/80">Pro tip:</span> Be specific about scale, features, and constraints for better results

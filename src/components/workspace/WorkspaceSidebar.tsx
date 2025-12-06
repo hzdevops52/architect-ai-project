@@ -9,6 +9,7 @@ interface WorkspaceSidebarProps {
   onHistoryClick: (prompt: string) => void;
   onReset: () => void;
   currentPrompt?: string;
+  isMobile?: boolean;
 }
 
 export function WorkspaceSidebar({ 
@@ -16,23 +17,26 @@ export function WorkspaceSidebar({
   history, 
   onHistoryClick, 
   onReset,
-  currentPrompt 
+  currentPrompt,
+  isMobile = false
 }: WorkspaceSidebarProps) {
   return (
-    <aside className="w-72 border-r border-border bg-sidebar flex flex-col">
-      {/* Header */}
-      <div className="p-4 border-b border-border">
-        <Link to="/" className="flex items-center gap-2.5 group">
-          <motion.div 
-            whileHover={{ rotate: 180, scale: 1.05 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center ring-1 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300"
-          >
-            <Cpu className="w-4 h-4 text-primary" />
-          </motion.div>
-          <span className="font-semibold text-foreground group-hover:text-primary transition-colors duration-200">ArchitectAI</span>
-        </Link>
-      </div>
+    <aside className={`${isMobile ? 'flex flex-col h-full' : 'w-72 border-r border-border bg-sidebar flex flex-col h-screen sticky top-0'}`}>
+      {/* Header - Only show on desktop */}
+      {!isMobile && (
+        <div className="p-4 border-b border-border">
+          <Link to="/" className="flex items-center gap-2.5 group">
+            <motion.div 
+              whileHover={{ rotate: 180, scale: 1.05 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center ring-1 ring-primary/20 group-hover:ring-primary/40 transition-all duration-300"
+            >
+              <Cpu className="w-4 h-4 text-primary" />
+            </motion.div>
+            <span className="font-semibold text-foreground group-hover:text-primary transition-colors duration-200">ArchitectAI</span>
+          </Link>
+        </div>
+      )}
 
       {/* Current Project */}
       {hasArchitecture && currentPrompt && (
