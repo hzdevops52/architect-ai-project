@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   ArrowRight, 
   Cpu, 
@@ -16,7 +17,8 @@ import {
   ChevronRight,
   Sparkles,
   Check,
-  Star
+  Star,
+  Shield
 } from "lucide-react";
 
 const fadeUp = {
@@ -37,6 +39,9 @@ export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const headerOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
+  const { user } = useAuth();
+  const ctaTo = user ? "/workspace" : "/auth";
+  const ctaLabel = user ? "Open workspace" : "Start designing";
 
   const features = [
     {
@@ -112,14 +117,16 @@ export function LandingPage() {
             <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-px after:bg-primary hover:after:w-full after:transition-all after:duration-300">Pricing</a>
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              Sign in
-            </Button>
-            <Link to="/workspace">
-              <Button size="sm" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300">
-                Get Started
-                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+          <div className="hidden md:flex items-center gap-2">
+            <Link to="/auth">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                Sign in
+              </Button>
+            </Link>
+            <Link to={ctaTo}>
+              <Button size="sm" className="bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-300 group">
+                {user ? "Workspace" : "Get started"}
+                <ArrowRight className="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-0.5 transition-transform" />
               </Button>
             </Link>
           </div>
@@ -145,10 +152,12 @@ export function LandingPage() {
               <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="text-sm text-muted-foreground hover:text-foreground py-2 transition-colors">How it works</a>
               <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="text-sm text-muted-foreground hover:text-foreground py-2 transition-colors">Pricing</a>
               <div className="pt-4 flex flex-col gap-3 border-t border-border">
-                <Button variant="ghost" size="sm" className="w-full justify-center">Sign in</Button>
-                <Link to="/workspace" className="w-full">
+                <Link to="/auth" onClick={() => setMobileMenuOpen(false)} className="w-full">
+                  <Button variant="ghost" size="sm" className="w-full justify-center">Sign in</Button>
+                </Link>
+                <Link to={ctaTo} onClick={() => setMobileMenuOpen(false)} className="w-full">
                   <Button size="sm" className="w-full bg-gradient-to-r from-primary to-accent text-primary-foreground">
-                    Get Started
+                    {user ? "Open workspace" : "Get started"}
                     <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
                   </Button>
                 </Link>
@@ -200,11 +209,15 @@ export function LandingPage() {
             className="text-center"
           >
             {/* Badge */}
-            <motion.div variants={fadeUp} className="mb-8">
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-primary/15 to-accent/15 border border-primary/25 text-primary text-sm font-medium backdrop-blur-sm">
-                <Sparkles className="w-4 h-4" />
-                AI-Powered System Design
-                <span className="flex items-center gap-1 text-accent">
+            <motion.div variants={fadeUp} className="mb-8 flex justify-center">
+              <span className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-card/70 border border-border/60 backdrop-blur-md text-xs sm:text-sm font-medium text-foreground/90 shadow-sm">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inset-0 rounded-full bg-primary opacity-75 animate-ping" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
+                </span>
+                AI-powered system design
+                <span className="text-muted-foreground">·</span>
+                <span className="text-primary inline-flex items-center gap-1">
                   <Star className="w-3 h-3 fill-current" />
                   New
                 </span>
@@ -230,15 +243,15 @@ export function LandingPage() {
             </motion.p>
 
             {/* CTAs */}
-            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/workspace">
-                <Button size="lg" className="h-13 px-10 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 text-base font-semibold w-full sm:w-auto shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group">
-                  Start Designing
+            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Link to={ctaTo} className="w-full sm:w-auto">
+                <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-95 text-base font-semibold w-full sm:w-auto shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group">
+                  {ctaLabel}
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="h-13 px-10 text-base font-medium w-full sm:w-auto border-border/60 hover:bg-secondary/80 hover:border-primary/30 transition-all duration-300">
-                Watch Demo
+              <Button variant="outline" size="lg" className="h-12 px-8 text-base font-medium w-full sm:w-auto border-border/60 bg-card/40 backdrop-blur-sm hover:bg-secondary/80 hover:border-primary/30 transition-all duration-300">
+                Watch demo
               </Button>
             </motion.div>
 
@@ -249,11 +262,11 @@ export function LandingPage() {
             >
               {[
                 { label: "10,000+ designs created", icon: Check },
-                { label: "Enterprise ready", icon: Check },
-                { label: "Export to PDF/PNG", icon: Check }
+                { label: "Enterprise ready", icon: Shield },
+                { label: "Export to PDF / PNG", icon: Check }
               ].map((item) => (
                 <div key={item.label} className="flex items-center gap-2.5 text-sm text-muted-foreground">
-                  <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center">
+                  <div className="w-5 h-5 rounded-full bg-primary/15 ring-1 ring-primary/20 flex items-center justify-center">
                     <item.icon className="w-3 h-3 text-primary" />
                   </div>
                   <span>{item.label}</span>
@@ -484,9 +497,9 @@ export function LandingPage() {
               <p className="text-muted-foreground mb-10 max-w-lg mx-auto text-sm sm:text-base leading-relaxed">
                 Join thousands of engineers who use ArchitectAI to master system design and ace their interviews.
               </p>
-              <Link to="/workspace">
-                <Button size="lg" className="h-13 px-10 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-90 font-semibold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group">
-                  Get Started Free
+              <Link to={ctaTo}>
+                <Button size="lg" className="h-12 px-8 bg-gradient-to-r from-primary to-accent text-primary-foreground hover:opacity-95 font-semibold shadow-xl shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group">
+                  {user ? "Open workspace" : "Get started free"}
                   <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
                 </Button>
               </Link>
