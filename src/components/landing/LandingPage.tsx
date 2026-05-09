@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   ArrowRight, 
   Cpu, 
@@ -16,7 +17,8 @@ import {
   ChevronRight,
   Sparkles,
   Check,
-  Star
+  Star,
+  Shield
 } from "lucide-react";
 
 const fadeUp = {
@@ -37,6 +39,9 @@ export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { scrollYProgress } = useScroll();
   const headerOpacity = useTransform(scrollYProgress, [0, 0.05], [0, 1]);
+  const { user } = useAuth();
+  const ctaTo = user ? "/workspace" : "/auth";
+  const ctaLabel = user ? "Open workspace" : "Start designing";
 
   const features = [
     {
