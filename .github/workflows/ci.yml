@@ -10,8 +10,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-node@v4
         with:
-            node-version: 22
+          node-version: 22
+
       - run: npm ci
+
       - run: npm run build
+
+  docker-job:
+    needs: build-job
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USRNAME }}
+          password: ${{ secrets.DOCKERHUB_PWD }}
+
+      - run: docker build -t hzdevops52/architect-ai:latest .
+
+      - run: docker push hzdevops52/architect-ai:latest
