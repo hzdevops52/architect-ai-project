@@ -31,6 +31,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USRNAME }}
           password: ${{ secrets.DOCKERHUB_PWD }}
 
-      - run: docker build -t hzdevops52/architect-ai:latest .
+      - run: |
+          docker build \
+          -t hzdevops52/architect-ai:latest \
+          -t hzdevops52/architect-ai:${{ github.sha }} \
+          .
 
-      - run: docker push hzdevops52/architect-ai:latest
+      - run: |
+          docker push hzdevops52/architect-ai:latest
+          docker push hzdevops52/architect-ai:${{ github.sha }}
