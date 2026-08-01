@@ -1,0 +1,13 @@
+replicaCount: 2
+
+image:
+  repository: hzdevops52/architect-ai
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 80
+
+container:
+  port: 80

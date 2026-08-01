@@ -1,0 +1,6 @@
+apiVersion: v2
+name: architect-ai
+description: Helm chart for Architect AI
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
