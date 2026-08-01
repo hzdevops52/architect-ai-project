@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: architect-ai-frontend
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: architect-ai
+
+  template:
+    metadata:
+      labels:
+          app: architect-ai
+
+    spec:
+      containers:
+        - name: frontend
+          image: hzdevops52/architect-ai:latest
+          ports:
+            - containerPort: 80
+        
